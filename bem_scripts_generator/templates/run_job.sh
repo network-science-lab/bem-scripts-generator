@@ -13,7 +13,7 @@
 
 #SBATCH --job-name={{job_name}}
 
-{{ python_path }} influence-simulator \
+{{ python_path }} -m influence_simulator \
     {{ dataset_path }} \
     {{ config_path }} \
     -o {{ output_path }} \
