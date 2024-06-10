@@ -11,7 +11,7 @@ license = { text="MIT" }
 dynamic = ["version"]
 requires-python = ">=3.11"
 dependencies = [
-
+    "Jinja2>=3.1.4,<4.0.0"
     ]
 
 [project.optional-dependencies]
@@ -31,6 +31,7 @@ include = ["bem_scripts_generator*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "bem_scripts_generator.version.__version__"}
+
 [project.scripts]
 bem-scripts-generator = "bem_scripts_generator.__main__:cli"
 

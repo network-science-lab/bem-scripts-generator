@@ -1,0 +1,4 @@
+{
+    "type": "IndependentCascadeSimulator",
+    "infection_probability": {{ threshold }}
+}
