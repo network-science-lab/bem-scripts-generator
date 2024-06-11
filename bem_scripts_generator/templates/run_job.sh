@@ -9,7 +9,7 @@
 #SBATCH -e slurm_output/slurm-%j.out
 
 #SBATCH --mail-user=pirog.adam@gmail.com
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=FAIL
 
 #SBATCH --job-name={{job_name}}
 

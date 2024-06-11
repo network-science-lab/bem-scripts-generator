@@ -4,8 +4,19 @@ from pathlib import Path
 from uuid import uuid4
 
 from jinja2 import Environment, PackageLoader
+from pandas import Timedelta
 
 from . import resource_map
+
+
+def get_time_val(dataset: Path, threshold: float) -> str:
+    base = resource_map.time[dataset.stem]
+    base = Timedelta(base) * 10
+    result = base * threshold
+    result = str(result).split()[-1]
+    result = result.split(".", 1)[0]
+
+    return result
 
 
 def parse_args() -> Namespace:
@@ -52,9 +63,6 @@ def main(args: Namespace):
         outfile.write_text(config, encoding="utf-8")
 
     for dataset in dataset_dir.glob("*"):
-        mem_value = resource_map.memory[dataset.stem]
-        time_val = resource_map.time[dataset.stem]
-
         for thresh in args.thresholds:
             for run_id in range(args.n_iter):
 
@@ -69,8 +77,8 @@ def main(args: Namespace):
                     config_path=config_dir / f"config_{thresh}.json",
                     output_path=output_path,
                     job_name=run_id,
-                    memory=mem_value,
-                    time=time_val,
+                    memory=resource_map.memory[dataset.stem],
+                    time=get_time_val(dataset, thresh),
                 )
 
                 script_file = scripts_dir / f"run_{run_id}.sh"
