@@ -11,6 +11,12 @@ from . import resource_map
 
 def get_time_val(dataset: Path, threshold: float) -> str:
     base = resource_map.time[dataset.stem]
+
+    if dataset.stem == "reddit2":
+        base = int(base.split(":", 1)[0]) * 10
+        result = int(threshold * base)
+        return f"{result}:00:00"
+
     base = Timedelta(base) * 10
     result = base * threshold
     result = str(result).split()[-1]
