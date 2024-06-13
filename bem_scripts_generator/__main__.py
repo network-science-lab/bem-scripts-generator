@@ -10,19 +10,23 @@ from . import resource_map
 
 
 def get_time_val(dataset: Path, threshold: float) -> str:
+    threshold = max(threshold, 0.1)
+
     base = resource_map.time[dataset.stem]
+    result = Timedelta(base) * 10 * threshold
 
-    if dataset.stem == "reddit2":
-        base = int(base.split(":", 1)[0]) * 10
-        result = int(threshold * base)
-        return f"{result}:00:00"
+    result = str(result).split()
+    days = int(result[0])
+    result = result[-1]
 
-    base = Timedelta(base) * 10
-    result = base * threshold
-    result = str(result).split()[-1]
-    result = result.split(".", 1)[0]
+    if days > 0:
+        result = result.split()
+        hours = int(result[0])
+        hours = hours + (24 * days)
+        result[0] = str(hours)
+        result = ":".join(result)
 
-    return result
+    return result.split(".", 1)[0]
 
 
 def parse_args() -> Namespace:
@@ -65,8 +69,9 @@ def main(args: Namespace):
     for thresh in args.thresholds:
         config = config_template.render(threshold=thresh)
 
-        outfile = config_dir / f"config_{thresh}.json"
-        outfile.write_text(config, encoding="utf-8")
+        (config_dir / f"config_{thresh}.json").write_text(
+            config, encoding="utf-8"
+        )
 
     for dataset in dataset_dir.glob("*"):
         for thresh in args.thresholds:
@@ -87,12 +92,12 @@ def main(args: Namespace):
                     time=get_time_val(dataset, thresh),
                 )
 
-                script_file = scripts_dir / f"run_{run_id}.sh"
-                script_file.write_text(script, encoding="utf-8")
+                (scripts_dir / f"run_{run_id}.sh").write_text(
+                    script, encoding="utf-8"
+                )
 
-    scripts = list(scripts_dir.glob("*.sh"))
     with (scripts_dir / "submit.sh").open("wt", encoding="utf-8") as handle:
-        for script in scripts:
+        for script in sorted(scripts_dir.glob("*.sh")):
             handle.write(f"sbatch {script}\n")
 
 
