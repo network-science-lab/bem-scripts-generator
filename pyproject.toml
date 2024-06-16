@@ -35,6 +35,7 @@ version = {attr = "bem_scripts_generator.version.__version__"}
 
 [project.scripts]
 bem-scripts-generator = "bem_scripts_generator.__main__:cli"
+bem-summary= "bem_scripts_generator.summary:cli"
 
 [tool.black]
 line-length = 79

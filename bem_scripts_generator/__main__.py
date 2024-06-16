@@ -98,7 +98,8 @@ def main(args: Namespace):
 
     with (scripts_dir / "submit.sh").open("wt", encoding="utf-8") as handle:
         for script in sorted(scripts_dir.glob("*.sh")):
-            handle.write(f"sbatch {script}\n")
+            if script.name != "submit.sh":
+                handle.write(f"sbatch {script}\n")
 
 
 def cli():
