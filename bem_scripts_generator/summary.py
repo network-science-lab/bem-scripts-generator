@@ -21,17 +21,23 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
+def threhsold_key(path: Path) -> float:
+    return float(path.name)
+
+
 def main(args: Namespace):
     root = Path(args.directory)
     result = []
 
-    for dataset in root.glob("*"):
-        for threshold in dataset.glob("*"):
-            count = len(tuple(threshold.glob("*.csv")))
-            item = ResultItem(
-                dataset=dataset.name, threshold=threshold.name, count=count
+    for dataset in sorted(root.glob("*")):
+        for threshold in sorted(dataset.glob("*"), key=threhsold_key):
+            result.append(
+                ResultItem(
+                    dataset=dataset.name,
+                    threshold=threshold.name,
+                    count=len(tuple(threshold.glob("*.csv"))),
+                )
             )
-            result.append(item)
 
     with open(args.output, "wt", encoding="utf-8") as handle:
         writer = csv_writer(handle)
